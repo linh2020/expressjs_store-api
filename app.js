@@ -5,9 +5,11 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 
+const connectDB = require("./db/connect.js");
+const productsRouter = require("./routes/products.js");
+
 const notFoundMiddleware = require("./middleware/not-found.js");
 const errorMiddleware = require("./middleware/error-handler.js");
-const connectDB = require("./db/connect.js");
 
 // parsing
 app.use(express.json());
@@ -16,6 +18,8 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send('<h1>Store API</h1><a href="/api/v1/products">Products Route</a>');
 });
+
+app.use("/api/v1/products", productsRouter);
 
 // products route
 

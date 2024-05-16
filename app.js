@@ -1,5 +1,8 @@
 require("dotenv").config();
 
+// to catch errors at runtime without using try/catch blocks in your async functions.
+require("express-async-errors");
+
 // async errors
 
 const express = require("express");

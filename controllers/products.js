@@ -1,10 +1,7 @@
 const Product = require("../models/product");
 
 const getAllProductStatic = async (req, res) => {
-  const search = "albany";
-  const products = await Product.find({
-    name: { $regex: search, $options: "i" },
-  });
+  const products = await Product.find({}).sort("-name price");
   res.status(200).json({ products, nbHits: products.length });
 };
 

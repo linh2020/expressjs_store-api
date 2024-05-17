@@ -1,9 +1,8 @@
 require("dotenv").config();
 
+// async errors
 // to catch errors at runtime without using try/catch blocks in your async functions.
 require("express-async-errors");
-
-// async errors
 
 const express = require("express");
 const app = express();
@@ -17,14 +16,13 @@ const errorMiddleware = require("./middleware/error-handler.js");
 // parsing
 app.use(express.json());
 
-// routes
+// root routes
 app.get("/", (req, res) => {
   res.send('<h1>Store API</h1><a href="/api/v1/products">Products Route</a>');
 });
 
-app.use("/api/v1/products", productsRouter);
-
 // products route
+app.use("/api/v1/products", productsRouter);
 
 // Error handling middleware
 app.use(notFoundMiddleware);

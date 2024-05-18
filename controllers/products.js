@@ -2,11 +2,9 @@ const Product = require("../models/product");
 
 const getAllProductStatic = async (req, res) => {
   // for testing api result
-  const products = await Product.find({})
-    .sort("name")
-    .select("name price")
-    .limit(4)
-    .skip(3);
+  const products = await Product.find({ price: { $gt: 40, $lt: 100 } })
+    .sort("price")
+    .select("name price");
 
   res.status(200).json({ products, nbHits: products.length });
 };

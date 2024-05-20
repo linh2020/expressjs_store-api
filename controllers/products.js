@@ -26,7 +26,6 @@ const getAllProducts = async (req, res) => {
     queryObject.name = { $regex: name, $options: "i" };
   }
 
-  // { numericFilters: 'price>40,rating>=4' }
   if (numericFilters) {
     const operatorMap = {
       ">": "$gt",
@@ -42,11 +41,24 @@ const getAllProducts = async (req, res) => {
       (match) => `-${operatorMap[match]}-`
     );
 
+    const options = ["price", "rating"];
+
+    // {{URL}}/products?numericFilters=price>40,rating>=4
+    // price-$gt-40,rating-$gte-4
+    filters = filters.split(",").forEach((element) => {
+      const [field, operator, value] = element.split("-");
+      if (options.includes(field)) {
+        queryObject[field] = { [operator]: Number(value) };
+      }
+    });
+
     console.log(numericFilters); // { numericFilters: 'price>40,rating>=4' }
     console.log(filters); // price-$gt-40,rating-$gte-4
+    console.log(queryObject); // { price: { '$gt': 40 }, rating: { '$gte': 4 } }
   }
 
   // console.log(queryObject); // { featured: false }, {}, etc.
+
   let result = Product.find(queryObject);
 
   if (sort) {
@@ -59,14 +71,14 @@ const getAllProducts = async (req, res) => {
 
   if (fields) {
     const fieldsList = fields.split(",").join(" ");
-    console.log(fieldsList);
+    console.log("fieldsList: ", fieldsList);
     result = result.select(fieldsList);
   }
 
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 10;
   const skip = Number(page - 1) * limit;
-  console.log(req.query); // { sort: '-name,-price', fields: 'name,price', page: '4' }
+  // console.log(req.query); // { sort: '-name,-price', fields: 'name,price', page: '4' }
 
   result = result.skip(skip).limit(limit); // 23
 
